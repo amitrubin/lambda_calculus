@@ -1,0 +1,45 @@
+Parens Parser:
+
+WANTED BEHAVIOR:
+"(a (b c d) (e () (f) ((g))) (h))"
+->
+["a ", ["b c d"], " ", ["e ", ["f"], [[g]]], [h]]
+
+
+THOUGHTS:
+<"(a (b c d) (e () (f) ((g))) (h))">
+
+-->>
+
+["a ", <(b c d)>, " ", <"(e () (f) ((g)))">, <"(h)">]
+
+-->
+
+["a ", ["b c d"], " ", ["e", <"()"> <"(f)"> <"((g))">], ["h"]]
+
+...
+
+
+at each recursive call <>:
+input: a balanced parens string
+algorithm:
+
+. processed_string <- remove the first and last chars from input
+. if processed_string == "":
+.	return []
+. 
+. output_array <- []
+. remaining_substring <- processed_string
+. while len(remaining_substring) != 0:
+.	if remaining_substring starts with "(":
+.		s <- find its balanced substring
+.		p <- <s>
+.		output_array.append(p)
+.		remaining_substring <- remaining_substring.removeprefix(s)
+.	else:
+.		s <- all text in remaining_substring until the first opening parens (not including), or until the end of the string
+.		output_array.append(s)
+.		remaining_substring <- remaining_substring.removeprefix(s)
+.
+. return output_array
+
